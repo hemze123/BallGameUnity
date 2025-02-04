@@ -2,43 +2,60 @@ using UnityEngine;
 
 public class KameraTakip : MonoBehaviour
 {
-    public Transform hedef;                     // Takip edilecek karpuz
-    public Vector3 offset = new Vector3(0, 8, -12);  // Kameranın uzaklık ve yükseklik ayarı
-    public float takipHizi = 5f;                 // Takip etme hızı
-    public float scrollHassasiyet = 2f;          // Scroll hassasiyeti (Zoom)
-    public float minUzaklik = 5f;                // Minimum uzaklık
-    public float maxUzaklik = 20f;               // Maksimum uzaklık
-    public float yukseklikLimit = 1.5f;          // Yükseklik sınırı
-    public Vector3 hedefOffset = new Vector3(0, 1.5f, 0); // Hedefin biraz daha yukarısını işaret eder
+    [SerializeField] private Transform hedef;         // Takip edilecek hedef
+    [SerializeField] private float yumusatmaZamani = 0.3f;   // Yumuşatma süresi
+    [SerializeField] private Vector3 offset;          // Kamera ile hedef arasındaki başlangıç mesafesi
+    [SerializeField] private float lookAtOffset = 2f; // Kameranın baktığı noktanın Y offset'i
+    [Range(1f, 50f)]
+    [SerializeField] private float yatayDonusHizi = 10f;
+    [Range(1f, 50f)]
+    [SerializeField] private float dikeyDonusHizi = 5f;
+    [SerializeField] private Joystick kameraJoystick;
 
-    private float mevcutUzaklik;  // Kameranın anlık uzaklığı
+    private Vector3 velocity = Vector3.zero;          // Kameranın mevcut hızı
+    private float currentYaw;                         // Yatay eksende dönüş açısı
+    private float currentPitch;                       // Dikey eksende dönüş açısı
+    private Vector3 lookAtPosition;                   // Kameranın bakacağı nokta
 
-    void Start()
+    private void Start()
     {
-        mevcutUzaklik = offset.magnitude;  // Başlangıç uzaklığı
+        if (hedef == null)
+        {
+            Debug.LogWarning("Lütfen takip edilecek hedefi belirleyin!");
+            return;
+        }
+
+        offset = transform.position - hedef.position;
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        if (hedef != null)
-        {
-            // Kamera zoom ayarı (fare tekerleği)
-            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-            mevcutUzaklik -= scrollInput * scrollHassasiyet;
-            mevcutUzaklik = Mathf.Clamp(mevcutUzaklik, minUzaklik, maxUzaklik);
+        if (hedef == null) return;
 
-            // Kameranın pozisyonunu hesapla
-            Vector3 hedefPozisyon = hedef.position + hedefOffset - transform.forward * mevcutUzaklik + Vector3.up * offset.y;
-            
-            // Yükseklik sınırını uygula
-            hedefPozisyon.y = Mathf.Max(hedefPozisyon.y, yukseklikLimit);
+        // Joystick'ten alınan inputlar
+        float horizontalInput = kameraJoystick.Horizontal;
+        float verticalInput = kameraJoystick.Vertical;
 
-            // Yumuşak hareket
-            transform.position = Vector3.Lerp(transform.position, hedefPozisyon, takipHizi * Time.deltaTime);
+        // Dönüş açısını yumuşatmak için Lerp kullan
+        currentYaw = Mathf.Lerp(currentYaw, currentYaw + horizontalInput * yatayDonusHizi, Time.deltaTime * yatayDonusHizi);
+        currentPitch = Mathf.Lerp(currentPitch, Mathf.Clamp(currentPitch - verticalInput * dikeyDonusHizi, -30f, 60f), Time.deltaTime * dikeyDonusHizi);
 
-            // Hedefin biraz yukarısına bak
-            Vector3 bakisNoktasi = hedef.position + hedefOffset;
-            transform.LookAt(bakisNoktasi);
-        }
+        // Kameranın yeni pozisyonunu hesapla
+        Vector3 hedefPozisyon = hedef.position + Quaternion.Euler(currentPitch, currentYaw, 0f) * offset;
+
+        // Kamerayı yumuşak bir şekilde yeni pozisyona taşı
+        transform.position = Vector3.SmoothDamp(
+            transform.position,
+            hedefPozisyon,
+            ref velocity,
+            yumusatmaZamani
+        );
+
+        // Kameranın bakacağı noktayı hesapla (hedefin biraz yukarısı)
+        lookAtPosition = hedef.position;
+        lookAtPosition.y += lookAtOffset; // Yukarı bakması için offset ekle
+
+        // Kamerayı hedefe doğru döndür
+        transform.LookAt(lookAtPosition);
     }
 }

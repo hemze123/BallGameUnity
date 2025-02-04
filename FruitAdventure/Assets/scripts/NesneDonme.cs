@@ -41,10 +41,10 @@ public class NesneDonme : MonoBehaviour
                 Vector3 carpmaNormal = collision.contacts[0].normal;
 
                 // Sekme yönü: hızın tersine çarpma normali etkisi
-                Vector3 sekmeYonu = Vector3.Reflect(rb.velocity, carpmaNormal);
+                Vector3 sekmeYonu = Vector3.Reflect(rb.linearVelocity, carpmaNormal);
 
                 // Yeni hız vektörü
-                rb.velocity = sekmeYonu * 2f; // Sekme katsayısını ayarlayın
+                rb.linearVelocity = sekmeYonu * 2f; // Sekme katsayısını ayarlayın
             }
         }
     }

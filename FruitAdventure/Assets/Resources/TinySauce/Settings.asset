@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa11ec82e9746928e211e7f096812ca, type: 3}
+  m_Name: Settings
+  m_EditorClassIdentifier: 
+  gameAnalyticsIosGameKey: 
+  gameAnalyticsIosSecretKey: 
+  gameAnalyticsAndroidGameKey: 87d0f9b36bb0bed9344ea03532e7b925
+  gameAnalyticsAndroidSecretKey: 6c7d90c8359c87a94a768eca7cd58f3b00e63f83
+  facebookAppId: 1817509555680496
+  facebookClientToken: 6a965ce76c57e277c9f6c94f3c22d738
+  adjustIOSToken: 
+  adjustAndroidToken: qc561gprgc1s
+  EditorIdfa: 14e364f7-8af2-4324-8ad8-478811fa9864
+  UseRemoteConfig: 0
+  UseVoodooAnalytics: 1
+  companyName: aspgam
+  privacyPolicyURL: https://doc-hosting.flycricket.io/balladventure-privacy-policy/6db44004-12d6-4405-bffb-458c4d65545f/privacy
+  developerContactEmail: lordgameblack@gmail.com
