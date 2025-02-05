@@ -76,7 +76,7 @@ public class KarpuzHareket : MonoBehaviour
         }
         else
         {
-            rb.linearVelocity *= surtunmeKuvveti;
+            rb.velocity *= surtunmeKuvveti;
             rb.angularVelocity *= surtunmeKuvveti;
 
             // Hareket sesi durdur
@@ -86,12 +86,12 @@ public class KarpuzHareket : MonoBehaviour
             }
         }
 
-        if (rb.linearVelocity.magnitude > hareketHizi)
+        if (rb.velocity.magnitude > hareketHizi)
         {
-            rb.linearVelocity = rb.linearVelocity.normalized * hareketHizi;
+            rb.velocity = rb.velocity.normalized * hareketHizi;
         }
 
-        if (zipladi && Mathf.Abs(rb.linearVelocity.y) < 0.5f)
+        if (zipladi && Mathf.Abs(rb.velocity.y) < 0.5f)
         {
             zipladi = false;
         }
@@ -99,7 +99,7 @@ public class KarpuzHareket : MonoBehaviour
 
     public void ZiplamaBasla()
     {
-        if (!zipladi && Mathf.Abs(rb.linearVelocity.y) < 0.5f)
+        if (!zipladi && Mathf.Abs(rb.velocity.y) < 0.5f)
         {
             ziplamaBasili = true;
             mevcutZiplamaGucu = ziplamaGucu;
@@ -121,4 +121,4 @@ public class KarpuzHareket : MonoBehaviour
             }
         }
     }
-} 
+}
